@@ -41,7 +41,8 @@ export class AuthService {
     // 4. Firmar y devolver el Token
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user: { // Opcional: devolver datos básicos del usuario
+      user: {
+        // Opcional: devolver datos básicos del usuario
         email: user.email,
         role: user.role,
       },
