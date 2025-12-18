@@ -3,11 +3,12 @@ import {
   ExecutionContext,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 export const CurrentUSer = createParamDecorator(
   (data: string, ctx: ExecutionContext) => {
     //1. obtenemos la peticion HTTP
-    const request = ctx.switchToHttp().getRequest();
+    const request = ctx.switchToHttp().getRequest<Request>();
 
     //2. extraemso el usuario (que puso el JwtStrategy ahí)
     const user = request.user;
