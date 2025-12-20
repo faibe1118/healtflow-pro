@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
-export const CurrentUSer = createParamDecorator(
+export const CurrentUser = createParamDecorator(
   (data: string, ctx: ExecutionContext) => {
     //1. obtenemos la peticion HTTP
     const request = ctx.switchToHttp().getRequest<Request>();
