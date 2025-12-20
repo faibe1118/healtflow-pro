@@ -1,34 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { DoctorsService } from './doctors.service';
-import { CreateDoctorDto } from './dto/create-doctor.dto';
-import { UpdateDoctorDto } from './dto/update-doctor.dto';
+import { CreateScheduleDto } from './dto/create-schedule.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from '../auth/decorators/get-user.decorator';
 
 @Controller('doctors')
+@UseGuards(AuthGuard('jwt')) // ¡Todo protegido!
 export class DoctorsController {
   constructor(private readonly doctorsService: DoctorsService) {}
 
-  @Post()
-  create(@Body() createDoctorDto: CreateDoctorDto) {
-    return this.doctorsService.create(createDoctorDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.doctorsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.doctorsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
-    return this.doctorsService.update(+id, updateDoctorDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.doctorsService.remove(+id);
+  @Post('schedule')
+  createSchedule(
+    @CurrentUser('userId') userId: string, // <-- ¡Mira qué elegancia!
+    @Body() createScheduleDto: CreateScheduleDto,
+  ) {
+    return this.doctorsService.setSchedule(userId, createScheduleDto);
   }
 }

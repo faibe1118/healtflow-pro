@@ -10,7 +10,7 @@ export const CurrentUser = createParamDecorator(
     //1. obtenemos la peticion HTTP
     const request = ctx.switchToHttp().getRequest<Request>();
 
-    //2. extraemso el usuario (que puso el JwtStrategy ahí)
+    //2. extraemos el usuario (que puso el JwtStrategy ahí)
     const user = request.user;
 
     if (!user) {
@@ -20,6 +20,6 @@ export const CurrentUser = createParamDecorator(
     }
 
     //3. si pedimos un campo especifico (@CurrentUser('email)), lo devolvemos
-    return data ? user[data] : user;
+    return data ? user[data as keyof typeof user] : user;
   },
 );
