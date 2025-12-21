@@ -40,7 +40,7 @@ export class UsersService {
                 create: {
                   firstName: createUserDto.firstName,
                   lastName: createUserDto.lastName,
-                  medicalLicenseNumber: createUserDto.medicalLicence,
+                  medicalLicenseNumber: createUserDto.medicalLicense,
                 },
               }
             : undefined,
