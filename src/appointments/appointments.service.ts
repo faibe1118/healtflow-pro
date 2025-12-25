@@ -61,10 +61,46 @@ export class AppointmentsService {
     });
   }
 
-  findAll() {
-    return this.prisma.appointment.findMany({
-      include: { patient: true, doctor: true }, // ¡Trae los nombres, no solo IDs!
-    });
+  async findAll(user: any) {
+    // CASO 1: Si es PACIENTE
+    if (user.role === 'PATIENT') {
+      // Buscamos su perfil de paciente usando su UserID
+      const patient = await this.prisma.patient.findUnique({
+        where: { userId: user.sub }, // 'sub' es el ID del usuario en el token
+      });
+      
+      if (!patient) return []; // Si no tiene perfil, no tiene citas
+
+      // Devolvemos solo SUS citas
+      return this.prisma.appointment.findMany({
+        where: { patientId: patient.id },
+        include: { doctor: true }, // Incluimos info del doctor para que vea con quién es
+      });
+    }
+
+    // CASO 2: Si es DOCTOR
+    if (user.role === 'DOCTOR') {
+      const doctor = await this.prisma.doctor.findUnique({
+        where: { userId: user.sub },
+      });
+
+      if (!doctor) return [];
+
+      // Devolvemos solo las citas asignadas a ÉL
+      return this.prisma.appointment.findMany({
+        where: { doctorId: doctor.id },
+        include: { patient: true }, // Incluimos info del paciente para que sepa a quién atender
+      });
+    }
+
+    // CASO 3: Si es ADMIN (Opcional)
+    if (user.role === 'ADMIN') {
+      return this.prisma.appointment.findMany({
+        include: { patient: true, doctor: true },
+      });
+    }
+
+    return []; // Por defecto
   }
 
   // ... (deja los otros métodos vacíos por ahora)
