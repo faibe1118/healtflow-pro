@@ -38,7 +38,7 @@ export class AppointmentsService {
           {
             startTime: { lt: createAppointmentDto.endTime },
           },
-          { 
+          {
             endTime: { gt: createAppointmentDto.startTime },
           },
         ],
@@ -68,7 +68,6 @@ export class AppointmentsService {
       const patient = await this.prisma.patient.findUnique({
         where: { userId: user.sub }, // 'sub' es el ID del usuario en el token
       });
-      
       if (!patient) return []; // Si no tiene perfil, no tiene citas
 
       // Devolvemos solo SUS citas
@@ -103,6 +102,12 @@ export class AppointmentsService {
     return []; // Por defecto
   }
 
+  async updateStatus(id: string, status: 'CONFIRMED' | 'CANCELED') {
+    return this.prisma.appointment.update({
+      where: { id },
+      data: { status},
+    });
+  }
   // ... (deja los otros métodos vacíos por ahora)
 
   findOne(id: number) {

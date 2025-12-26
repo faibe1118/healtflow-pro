@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Patch, Param } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,6 +19,15 @@ export class AppointmentsController {
 
   @Get()
   findAll(@CurrentUser() user: any) {
+    // <--- Inyectamos el user completo
     return this.appointmentsService.findAll(user);
+  }
+
+  @Patch()
+  updateStatus(
+    @Param('id') id: string,
+    @Body('status') status: 'CONFIRMED'| 'CANCELED'
+  ){
+    return this.appointmentsService.updateStatus(id, status);
   }
 }
